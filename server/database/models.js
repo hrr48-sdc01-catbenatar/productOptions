@@ -19,14 +19,19 @@ const Product = db.define('Product', {
     type: DataTypes.INTEGER,
     defaultValue: 0
   }
+}, {
+  timestamps: false
 })
+
 const Store = db.define('Store', {
   location: {
     type: DataTypes.STRING,
     allowNull: false,
     // unique: true
   }
-});
+}, {
+  timestamps: false
+})
 
 const Stock = db.define('Stock', {
   color: {
@@ -41,8 +46,10 @@ const Stock = db.define('Stock', {
   qty: {
    type: DataTypes.INTEGER,
     defaultValue: 0
-  }
-});
+  },
+}, {
+  timestamps: false
+})
 
 // set up foreign keys and two way association
 Product.hasMany(Stock);
