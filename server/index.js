@@ -193,7 +193,7 @@ app.put('/stock/:id', (req, res) => {
   const { id } = req.params;
   const { color, colorUrl, size, qty, storeId, productId } = req.body
   sequelize.query(`UPDATE Stocks SET color='${color}', colorUrl='${colorUrl}', size='${size}', qty=${qty}, storeId=${storeId}, productId=${productId} WHERE id=${id}`)
-    .then( (data) => {
+    .then((data) => {
       res.send(`Stock ${id} successfully updated`);
     })
     .catch( (error) => {
@@ -203,8 +203,40 @@ app.put('/stock/:id', (req, res) => {
 })
 
 //Delete one product using async/await
+app.delete('/products/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.Product.destroy({
+      where: {
+        id: id
+      }
+    });
+    res.send(`Product ${id} successfully deleted`);
+  } catch (error) {
+    console.error(error);
+    res.send(`There was an error deleting product ${id}`);
+  }
+})
+
 //Delete one store using Promises
+app.delete('/stores/:id', (req, res) => {
+  const { id } = req.params;
+  db.Store.destroy({
+    where: {
+      id: id
+    }
+  })
+    .then ((data) => {
+      res.send(`Store ${id} successfully deleted`);
+    })
+    .catch ((error) => {
+      console.error(error);
+      res.send(`There was an error deleting store ${id}`);
+    });
+})
+
 //Delete one set of stock info using raw SQL
+
 
 //Delete all products using async/await
 //Delete all stores using Promises
