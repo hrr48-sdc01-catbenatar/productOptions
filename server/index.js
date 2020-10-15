@@ -20,80 +20,94 @@ app.use(express.static(path.join(__dirname, '../client/public/dist')))
 
 // getting all products data from DB
 app.get('/products', async (req, res) => {
-    try {
-      const data = await db.Product.findAll({
-        attributes: {exclude: ['createdAt', 'updatedAt']}
-      })
-      res.send(data);
-    } catch (e) {
-    console.error(e);
-    }
-})
+  try {
+    const data = await db.Product.findAll();
+    res.send(data);
+  } catch (e) {
+  console.error(e);
+  }
+});
 
 
  // getting a specific product's data from the DB
 app.get('/products/:productId', async (req, res) => {
-  const data = await db.Product.findAll({
-    where: {
-      id: req.params.productId
-    },
-    attributes: {exclude: ['createdAt', 'updatedAt']}
-  })
+  try {
+    const data = await db.Product.findAll({
+      where: {
+        id: req.params.productId
+      }
+    })
     res.send(data[0]);
-  })
+  } catch (e) {
+    console.error(e);
+  }
+});
 
 
 // get all available stock using raw SQL query with inner joins
 app.get('/stock', async (req, res) => {
   try {
-
-  const stocks = await sequelize.query("\
-  SELECT Stocks.id, Products.name, Stores.location, Stocks.color, \
-  Stocks.size, Stocks.qty, Products.id as productId \
-  FROM Stocks INNER JOIN Stores ON Stores.id = Stocks.storeId \
-  INNER JOIN Products ON Stocks.productId = Products.id",
-  {type: QueryTypes.SELECT});
-
-    await res.send(stocks);
+    const stocks = await sequelize.query("\
+    SELECT Stocks.id, Products.name, Stores.location, Stocks.color, \
+    Stocks.size, Stocks.qty, Products.id as productId \
+    FROM Stocks INNER JOIN Stores ON Stores.id = Stocks.storeId \
+    INNER JOIN Products ON Stocks.productId = Products.id");
+    res.send(stocks);
   } catch (e) {
     console.log(e);
   }
-
-  })
+});
 
 
   // get a specific product's stock using raw SQL query with inner joins
 app.get('/stock/:productId', async (req, res) => {
-
-  const stocks = await sequelize.query(`\
-  SELECT Stocks.id, Products.name, Stores.location, Stocks.color, \
-  Stocks.colorUrl, Stocks.size, Stocks.qty, Products.id as productId, Stores.id as storeId \
-  FROM Stocks INNER JOIN Stores ON Stores.id = Stocks.storeId \
-  INNER JOIN Products ON Stocks.productId = Products.id \
-  WHERE Stocks.productId = ${[req.params.productId]}`,
-  {type: QueryTypes.SELECT});
-
-    await res.send(stocks);
+  try {
+    const stocks = await sequelize.query(`\
+    SELECT Stocks.id, Products.name, Stores.location, Stocks.color, \
+    Stocks.colorUrl, Stocks.size, Stocks.qty, Products.id as productId, Stores.id as storeId \
+    FROM Stocks INNER JOIN Stores ON Stores.id = Stocks.storeId \
+    INNER JOIN Products ON Stocks.productId = Products.id \
+    WHERE Stocks.productId = ${[req.params.productId]}`);
+    res.send(stocks);
+  } catch (e) {
+    console.error(e);
+  }
 });
 
-  // getting all Stores data from DB
+//get a specific stock using the stock's own id
+app.get('/stockId/:stockId', async (req, res) => {
+  try {
+    const stocks = await sequelize.query(`\
+    SELECT * FROM Stocks WHERE Stocks.id = ${[req.params.stockId]}`);
+    res.send(stocks);
+  } catch (e) {
+    console.error(e);
+  }
+});
+
+  // getting all Stores' data from DB
 app.get('/stores', async (req, res) => {
-  const data = await db.Store.findAll({
-    attributes: {exclude: ['createdAt', 'updatedAt']}
-  })
+  try {
+    const data = await db.Store.findAll();
     res.send(data);
-  })
+  } catch (e) {
+    console.error(e);
+  }
+});
 
   // get a store's data
 app.get('/stores/:storeId', async (req, res) => {
-  const data = await db.Store.findAll({
-    where: {
-      id: req.params.storeId
-    },
-    attributes: {exclude: ['createdAt', 'updatedAt']}
-  })
+  try {
+    const data = await db.Store.findAll({
+      where: {
+        id: req.params.storeId
+      }
+    });
     res.send(data[0]);
-  })
+  } catch (e) {
+    console.error(e);
+  }
+});
 
 
 
@@ -123,8 +137,8 @@ app.get('/stores/:storeId', async (req, res) => {
     try {
       await db.Product.create(req.body);
       res.send('Product successfully added!');
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
+      console.error(e);
       res.send('There was an error adding a product');
     }
   });
@@ -135,8 +149,8 @@ app.get('/stores/:storeId', async (req, res) => {
       .then((data) => {
         res.send('Store successfully added!');
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((e) => {
+        console.error(e);
         res.send('There was an error adding a store');
       });
   });
@@ -148,8 +162,8 @@ app.post('/stock', (req, res) => {
     .then((data) => {
       res.send('Stock successfully added!');
     })
-    .catch((error) => {
-      console.error(error);
+    .catch((e) => {
+      console.error(e);
       res.send('There was an error adding a stock');
     });
  });
@@ -165,8 +179,8 @@ app.put('/products/:id', async (req, res) => {
       }
     });
     res.send(`Product ${id} successfully updated`);
-  } catch(error) {
-    console.error(error);
+  } catch(e) {
+    console.error(e);
     res.send(`There was an error updating product ${id}`);
   }
 });
@@ -182,8 +196,8 @@ app.put('/stores/:id', (req, res) => {
     .then( (data) => {
       res.send(`Store ${id} successfully updated`);
     })
-    .catch( (error) => {
-      console.error(error);
+    .catch( (e) => {
+      console.error(e);
       res.send(`There was an error updating product ${id}`);
     });
 });
@@ -196,8 +210,8 @@ app.put('/stock/:id', (req, res) => {
     .then((data) => {
       res.send(`Stock ${id} successfully updated`);
     })
-    .catch( (error) => {
-      console.error(error);
+    .catch( (e) => {
+      console.error(e);
       res.send(`There was an error updating stock ${id}`);
     });
 })
@@ -212,8 +226,8 @@ app.delete('/products/:id', async (req, res) => {
       }
     });
     res.send(`Product ${id} successfully deleted`);
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    console.error(e);
     res.send(`There was an error deleting product ${id}`);
   }
 })
@@ -229,14 +243,24 @@ app.delete('/stores/:id', (req, res) => {
     .then ((data) => {
       res.send(`Store ${id} successfully deleted`);
     })
-    .catch ((error) => {
-      console.error(error);
+    .catch ((e) => {
+      console.error(e);
       res.send(`There was an error deleting store ${id}`);
     });
 })
 
 //Delete one set of stock info using raw SQL
-
+app.delete('/stock/:id', (req, res) => {
+  const { id } = req.params;
+  sequelize.query(`DELETE FROM Stocks WHERE id=${id}`)
+    .then((data) => {
+      res.send(`Stock ${id} successfully deleted`);
+    })
+    .catch ((e) => {
+      console.error(e);
+      res.send(`There was an error deleting stock ${id}`);
+    });
+})
 
 //Delete all products using async/await
 //Delete all stores using Promises
