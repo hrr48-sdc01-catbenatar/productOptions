@@ -1,4 +1,3 @@
-
 ## Product options component
 
  Module to select quantity, color or size before adding an item to the registry.
@@ -44,20 +43,31 @@ There are three tables: Products, Stores, and Stocks. There is a one-to-many rel
 
 #### Products Table
 name: String, allowNull: false
+
 price: Float, allowNull: false
+
 reviews: Float, defaultValue: 0
+
 reviewCount: Integer, defaultValue: 0
+
 
 #### Stores Table
 location: String, allowNull: false
 
+
 #### Stocks Table
 color: String
+
 colorUrl: String
+
 size: String
+
 qty: Integer, defaultValue: 0
+
 storeId: Integer
+
 productId: Integer
+
 
 ### Available CRUD Operations
 
@@ -92,7 +102,3 @@ productId: Integer
 `DELETE '/stores/:id'` delete the store specified in the url
 
 `DELETE '/stock/:id'` delete the stock specified in the url
-
-
-
-
