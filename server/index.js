@@ -22,9 +22,17 @@ app.use(express.static(path.join(__dirname, '../client/public/dist')))
 app.get('/products', async (req, res) => {
   try {
     const data = await db.Product.findAll();
-    res.send(data);
+    if (data === null) {
+      res.status(404);
+      res.send('Not found');
+    } else {
+      res.status(200);
+      res.send(data);
+    };
   } catch (e) {
-  console.error(e);
+    console.error(e);
+    res.status(500);
+    res.send(`There was an error: ${e}`);
   }
 });
 
@@ -32,14 +40,22 @@ app.get('/products', async (req, res) => {
  // getting a specific product's data from the DB
 app.get('/products/:productId', async (req, res) => {
   try {
-    const data = await db.Product.findAll({
+    const data = await db.Product.findOne({
       where: {
         id: req.params.productId
       }
     })
-    res.send(data[0]);
+    if (data === null) {
+      res.status(404);
+      res.send('Not found');
+    } else {
+      res.status(200);
+      res.send(data);
+    };
   } catch (e) {
     console.error(e);
+    res.status(500);
+    res.send(`There was an error: ${e}`);
   }
 });
 
@@ -47,14 +63,22 @@ app.get('/products/:productId', async (req, res) => {
 // get all available stock using raw SQL query with inner joins
 app.get('/stock', async (req, res) => {
   try {
-    const stocks = await sequelize.query("\
+    const data = await sequelize.query("\
     SELECT Stocks.id, Products.name, Stores.location, Stocks.color, \
     Stocks.size, Stocks.qty, Products.id as productId \
     FROM Stocks INNER JOIN Stores ON Stores.id = Stocks.storeId \
     INNER JOIN Products ON Stocks.productId = Products.id");
-    res.send(stocks);
+    if (data === null) {
+      res.status(404);
+      res.send('Not found');
+    } else {
+      res.status(200);
+      res.send(data);
+    };
   } catch (e) {
-    console.log(e);
+    console.error(e);
+    res.status(500);
+    res.send(`There was an error: ${e}`);
   }
 });
 
@@ -62,26 +86,42 @@ app.get('/stock', async (req, res) => {
   // get a specific product's stock using raw SQL query with inner joins
 app.get('/stock/:productId', async (req, res) => {
   try {
-    const stocks = await sequelize.query(`\
+    const data = await sequelize.query(`\
     SELECT Stocks.id, Products.name, Stores.location, Stocks.color, \
     Stocks.colorUrl, Stocks.size, Stocks.qty, Products.id as productId, Stores.id as storeId \
     FROM Stocks INNER JOIN Stores ON Stores.id = Stocks.storeId \
     INNER JOIN Products ON Stocks.productId = Products.id \
     WHERE Stocks.productId = ${[req.params.productId]}`);
-    res.send(stocks);
+    if (data[0][0] === null) {
+      res.status(404);
+      res.send('Not found');
+    } else {
+      res.status(200);
+      res.send(data[0][0]);
+    };
   } catch (e) {
     console.error(e);
+    res.status(500);
+    res.send(`There was an error: ${e}`);
   }
 });
 
 //get a specific stock using the stock's own id
 app.get('/stockId/:stockId', async (req, res) => {
   try {
-    const stocks = await sequelize.query(`\
-    SELECT * FROM Stocks WHERE Stocks.id = ${[req.params.stockId]}`);
-    res.send(stocks);
+    const data = await sequelize.query(`\
+    SELECT id, color, colorUrl, size, qty, productId, storeId FROM Stocks WHERE id = ${[req.params.stockId]}`);
+    if (data[0][0] === null) {
+      res.status(404);
+      res.send('Not found');
+    } else {
+      res.status(200);
+      res.send(data[0][0]);
+    };
   } catch (e) {
     console.error(e);
+    res.status(500);
+    res.send(`There was an error: ${e}`);
   }
 });
 
@@ -89,23 +129,40 @@ app.get('/stockId/:stockId', async (req, res) => {
 app.get('/stores', async (req, res) => {
   try {
     const data = await db.Store.findAll();
-    res.send(data);
+    if (data === null) {
+      res.status(404);
+      res.send('Not found');
+    } else {
+      res.status(200);
+      res.send(data);
+    }
   } catch (e) {
     console.error(e);
+    res.status(500);
+    res.send(`There was an error: ${e}`);
   }
 });
 
   // get a store's data
 app.get('/stores/:storeId', async (req, res) => {
   try {
-    const data = await db.Store.findAll({
+    const data = await db.Store.findOne({
       where: {
         id: req.params.storeId
       }
     });
-    res.send(data[0]);
+    if (data === null) {
+      res.status(404);
+      res.send('Not found');
+    } else {
+      res.status(200);
+      res.send(data);
+    }
+
   } catch (e) {
     console.error(e);
+    res.status(500);
+    res.send(`There was an error: ${e}`);
   }
 });
 
@@ -139,7 +196,8 @@ app.post('/products', async (req, res) => {
     res.send('Product successfully added!');
   } catch (e) {
     console.error(e);
-    res.send('There was an error adding a product');
+    res.status(500);
+    res.send(`There was an error adding a product: ${e}`);
   }
 });
 
@@ -151,20 +209,22 @@ app.post('/stores', (req, res) => {
     })
     .catch((e) => {
       console.error(e);
-      res.send('There was an error adding a store');
+      res.status(500);
+      res.send(`There was an error adding a store: ${e}`);
     });
 });
 
 //Post new stock info using raw SQL
 app.post('/stock', (req, res) => {
-  const { id, name, color, colorUrl, size, qty, productId, storeId } = req.body;
+  const { color, colorUrl, size, qty, productId, storeId } = req.body;
   sequelize.query(`INSERT INTO Stocks (color, colorUrl, size, qty, productId, storeId) values ('${color}', '${colorUrl}', '${size}', ${qty}, ${productId}, ${storeId})`)
     .then((data) => {
       res.send('Stock successfully added!');
     })
     .catch((e) => {
       console.error(e);
-      res.send('There was an error adding a stock');
+      res.status(500);
+      res.send(`There was an error adding a stock: ${e}`);
     });
  });
 
@@ -172,63 +232,131 @@ app.post('/stock', (req, res) => {
 //Update a product using async/await
 app.put('/products/:id', async (req, res) => {
   const { id } = req.params;
-  try {
-    await db.Product.update(req.body, {
-      where: {
-        id: id
-      }
-    });
-    res.send(`Product ${id} successfully updated`);
-  } catch(e) {
-    console.error(e);
-    res.send(`There was an error updating product ${id}`);
+  const { name, price, reviews, reviewCount } = req.body;
+  const product = await db.Product.findOne({ where: { id: id } });
+
+  if (product === null) {
+    try {
+      await db.Product.create({
+        id: id,
+        name: name,
+        price: price,
+        reviews: reviews,
+        reviewCount: reviewCount
+      });
+      res.status(201);
+      res.send('Product was not present, but it was successfully added!');
+    } catch (e) {
+      console.error(e);
+      res.status(500);
+      res.send(`Product was not present. Tried to add it, but there was an error: ${e}`);
+    }
+  } else {
+    try {
+      await db.Product.update(req.body, {
+        where: {
+          id: id
+        }
+      });
+      res.status(200);
+      res.send(`Product ${id} successfully updated`);
+    } catch(e) {
+      console.error(e);
+      res.status(500);
+      res.send(`There was an error updating product ${id}: ${e}`);
+    }
   }
+
 });
 
 //Update a store using Promises
-app.put('/stores/:id', (req, res) => {
+app.put('/stores/:id', async (req, res) => {
   const { id } = req.params;
-  db.Store.update(req.body, {
-    where: {
-      id: id
-    }
-  })
-    .then( (data) => {
-      res.send(`Store ${id} successfully updated`);
+  const { location } = req.body;
+  const store = await db.Store.findOne({ where: { id: id } });
+  if (store === null) {
+    db.Store.create({
+      id: id,
+      location: location
     })
-    .catch( (e) => {
-      console.error(e);
-      res.send(`There was an error updating product ${id}`);
-    });
+      .then((data) => {
+        res.status(201);
+        res.send('Store was not present, but it was successfully added!');
+      })
+      .catch((e) => {
+        console.error(e);
+        res.status(500);
+        res.send(`Store was not present. Tried to add it, but there was an error: ${e}`);
+      });
+  } else {
+    db.Store.update(req.body, {
+      where: {
+        id: id
+      }
+    })
+      .then( (data) => {
+        res.status(200);
+        res.send(`Store ${id} successfully updated`);
+      })
+      .catch( (e) => {
+        console.error(e);
+        res.status(500);
+        res.send(`There was an error updating store ${id}: ${e}`);
+      });
+  }
 });
 
 //Update stock info using raw SQL
 app.put('/stock/:id', (req, res) => {
   const { id } = req.params;
-  const { color, colorUrl, size, qty, storeId, productId } = req.body
-  sequelize.query(`UPDATE Stocks SET color='${color}', colorUrl='${colorUrl}', size='${size}', qty=${qty}, storeId=${storeId}, productId=${productId} WHERE id=${id}`)
-    .then((data) => {
-      res.send(`Stock ${id} successfully updated`);
-    })
-    .catch( (e) => {
-      console.error(e);
-      res.send(`There was an error updating stock ${id}`);
-    });
+  const { color, colorUrl, size, qty, storeId, productId } = req.body;
+  const data = sequelize.query(`SELECT * FROM Stocks WHERE id=${id}`);
+  if (data === null) {
+    sequelize.query(`INSERT INTO Stocks (color, colorUrl, size, qty, productId, storeId) values ('${color}', '${colorUrl}', '${size}', ${qty}, ${productId}, ${storeId})`)
+      .then((data) => {
+        res.status(201);
+        res.send('That stock was not found, but it was successfully added!');
+      })
+      .catch((e) => {
+        console.error(e);
+        rest.status(500);
+        res.send('That stock was not found, and there was an error adding it.');
+      });
+
+  } else {
+    sequelize.query(`UPDATE Stocks SET color='${color}', colorUrl='${colorUrl}', size='${size}', qty=${qty}, storeId=${storeId}, productId=${productId} WHERE id=${id}`)
+      .then((data) => {
+        res.status(200);
+        res.send(`Stock ${id} successfully updated`);
+      })
+      .catch( (e) => {
+        console.error(e);
+        res.status(500);
+        res.send(`There was an error updating stock ${id}: ${e}`);
+      });
+  }
 });
 
 //Delete one product using async/await
 app.delete('/products/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    await db.Product.destroy({
+    const data = await db.Product.destroy({
       where: {
         id: id
       }
     });
-    res.send(`Product ${id} successfully deleted`);
+    if (JSON.stringify(data) === '0') {
+      res.status(404);
+      res.send('Not found');
+    } else {
+      res.status(200);
+      res.send(`Product ${id} successfully deleted`);
+    };
   } catch (e) {
     console.error(e);
-    res.send(`There was an error deleting product ${id}`);
+    res.status(500);
+    res.send(`There was an error deleting product ${id}: ${e}`);
   }
 });
 
@@ -241,11 +369,18 @@ app.delete('/stores/:id', (req, res) => {
     }
   })
     .then ((data) => {
-      res.send(`Store ${id} successfully deleted`);
+      if (JSON.stringify(data) === '0') {
+        res.status(404);
+        res.send('Not found');
+      } else {
+        res.status(200);
+        res.send(`Store ${id} successfully deleted`);
+      };
     })
     .catch ((e) => {
       console.error(e);
-      res.send(`There was an error deleting store ${id}`);
+      res.status(500);
+      res.send(`There was an error deleting store ${id}: ${e}`);
     });
 });
 
@@ -254,11 +389,18 @@ app.delete('/stock/:id', (req, res) => {
   const { id } = req.params;
   sequelize.query(`DELETE FROM Stocks WHERE id=${id}`)
     .then((data) => {
-      res.send(`Stock ${id} successfully deleted`);
+      if (JSON.stringify(data) === '0') {
+        res.status(404);
+        res.send('Not found');
+      } else {
+        res.status(200);
+        res.send(`Stock ${id} successfully deleted`);
+      };
     })
     .catch ((e) => {
       console.error(e);
-      res.send(`There was an error deleting stock ${id}`);
+      res.status(500);
+      res.send(`There was an error deleting stock ${id}: ${e}`);
     });
 });
 
