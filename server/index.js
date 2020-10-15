@@ -67,14 +67,14 @@ app.get('/stock/:productId', async (req, res) => {
 
   const stocks = await sequelize.query(`\
   SELECT Stocks.id, Products.name, Stores.location, Stocks.color, \
-  Stocks.colorUrl, Stocks.size, Stocks.qty, Products.id as productId \
+  Stocks.colorUrl, Stocks.size, Stocks.qty, Products.id as productId, Stores.id as storeId \
   FROM Stocks INNER JOIN Stores ON Stores.id = Stocks.storeId \
   INNER JOIN Products ON Stocks.productId = Products.id \
   WHERE Stocks.productId = ${[req.params.productId]}`,
   {type: QueryTypes.SELECT});
 
     await res.send(stocks);
-  })
+});
 
   // getting all Stores data from DB
 app.get('/stores', async (req, res) => {
@@ -122,9 +122,10 @@ app.get('/stores/:storeId', async (req, res) => {
   app.post('/products', async (req, res) => {
     try {
       await db.Product.create(req.body);
-      res.send('Product successfully added');
+      res.send('Product successfully added!');
     } catch (error) {
-      res.send('There was an error adding a product: ', error);
+      console.error(error);
+      res.send('There was an error adding a product');
     }
   });
 
@@ -132,16 +133,27 @@ app.get('/stores/:storeId', async (req, res) => {
   app.post('/stores', (req, res) => {
     db.Store.create(req.body)
       .then((data) => {
-        res.send('Store successfully added');
+        res.send('Store successfully added!');
       })
       .catch((error) => {
-        res.send('There was an error adding a store: ', error);
+        console.error(error);
+        res.send('There was an error adding a store');
       });
   });
 
-
-
 //Post new stock info using raw SQL
+app.post('/stock', (req, res) => {
+  const { id, name, color, colorUrl, size, qty, productId, storeId } = req.body;
+  sequelize.query(`INSERT INTO Stocks (id, color, colorUrl, size, qty, productId, storeId) values (${id}, '${color}', '${colorUrl}', '${size}', ${qty}, ${productId}, ${storeId})`,
+    {type: QueryTypes.INSERT, attributes: {exclude: ['createdAt', 'updatedAt']}})
+    .then((data) => {
+      res.send('Stock successfully added!');
+    })
+    .catch((error) => {
+      console.error(error);
+      res.send('There was an error adding a stock');
+    });
+ });
 
 
 //Update a new product using async/await
