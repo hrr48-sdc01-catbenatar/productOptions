@@ -133,27 +133,27 @@ app.get('/stores/:storeId', async (req, res) => {
 //Note: For practice, I'm doing all the Product operations with Async/Await, all the Store operations with Promises, and all the Stock operations with raw SQL.
 
 //Post a new product using async/await
-  app.post('/products', async (req, res) => {
-    try {
-      await db.Product.create(req.body);
-      res.send('Product successfully added!');
-    } catch (e) {
-      console.error(e);
-      res.send('There was an error adding a product');
-    }
-  });
+app.post('/products', async (req, res) => {
+  try {
+    await db.Product.create(req.body);
+    res.send('Product successfully added!');
+  } catch (e) {
+    console.error(e);
+    res.send('There was an error adding a product');
+  }
+});
 
 //Post a new store using Promises
-  app.post('/stores', (req, res) => {
-    db.Store.create(req.body)
-      .then((data) => {
-        res.send('Store successfully added!');
-      })
-      .catch((e) => {
-        console.error(e);
-        res.send('There was an error adding a store');
-      });
-  });
+app.post('/stores', (req, res) => {
+  db.Store.create(req.body)
+    .then((data) => {
+      res.send('Store successfully added!');
+    })
+    .catch((e) => {
+      console.error(e);
+      res.send('There was an error adding a store');
+    });
+});
 
 //Post new stock info using raw SQL
 app.post('/stock', (req, res) => {
@@ -214,7 +214,7 @@ app.put('/stock/:id', (req, res) => {
       console.error(e);
       res.send(`There was an error updating stock ${id}`);
     });
-})
+});
 
 //Delete one product using async/await
 app.delete('/products/:id', async (req, res) => {
@@ -230,7 +230,7 @@ app.delete('/products/:id', async (req, res) => {
     console.error(e);
     res.send(`There was an error deleting product ${id}`);
   }
-})
+});
 
 //Delete one store using Promises
 app.delete('/stores/:id', (req, res) => {
@@ -247,7 +247,7 @@ app.delete('/stores/:id', (req, res) => {
       console.error(e);
       res.send(`There was an error deleting store ${id}`);
     });
-})
+});
 
 //Delete one set of stock info using raw SQL
 app.delete('/stock/:id', (req, res) => {
@@ -260,12 +260,7 @@ app.delete('/stock/:id', (req, res) => {
       console.error(e);
       res.send(`There was an error deleting stock ${id}`);
     });
-})
-
-//Delete all products using async/await
-//Delete all stores using Promises
-//Delete all stock info using raw SQL
-
+});
 
   app.listen(port, () => {
     console.log(`app listening at http://localhost:${port}`)
