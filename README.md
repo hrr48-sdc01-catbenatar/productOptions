@@ -43,20 +43,31 @@ There are three tables: Products, Stores, and Stocks. There is a one-to-many rel
 
 #### Products Table
 name: String, allowNull: false
+
 price: Float, allowNull: false
+
 reviews: Float, defaultValue: 0
+
 reviewCount: Integer, defaultValue: 0
+
 
 #### Stores Table
 location: String, allowNull: false
 
+
 #### Stocks Table
 color: String
+
 colorUrl: String
+
 size: String
+
 qty: Integer, defaultValue: 0
+
 storeId: Integer
+
 productId: Integer
+
 
 ### Available CRUD Operations
 
