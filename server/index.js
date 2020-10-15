@@ -5,32 +5,33 @@ const port = 3002;
 const db = require('./database/models');
 const data = require('./data/testData.js');
 const path = require('path');
+const bodyParser = require('body-parser')
 const { QueryTypes } = require('sequelize');
 const sequelize = require('./database/index.js');
 const cors = require('cors');
 
 app.use(cors());
 
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
 app.use(express.static(path.join(__dirname, '../client/public/dist')))
 
 
 // getting all products data from DB
 app.get('/products', async (req, res) => {
-    try {		
+    try {
       const data = await db.Product.findAll({
         attributes: {exclude: ['createdAt', 'updatedAt']}
       })
       res.send(data);
     } catch (e) {
-    console.error(e)
-    } 
+    console.error(e);
+    }
 })
 
 
-
-    
-
-  // getting a specific product's data from the DB
+ // getting a specific product's data from the DB
 app.get('/products/:productId', async (req, res) => {
   const data = await db.Product.findAll({
     where: {
@@ -112,6 +113,48 @@ app.get('/stores/:storeId', async (req, res) => {
   // })
   //     await res.send(data);
   //   })
+
+
+
+//Note: For practice, I'm doing all the Product operations with Async/Await, all the Store operations with Promises, and all the Stock operations with raw SQL.
+
+//Post a new product using async/await
+  app.post('/products', async (req, res) => {
+    try {
+      await db.Product.create(req.body);
+      res.send('Product successfully added');
+    } catch (error) {
+      res.send('There was an error adding a product: ', error);
+    }
+  });
+
+//Post a new store using Promises
+  app.post('/stores', (req, res) => {
+    db.Store.create(req.body)
+      .then((data) => {
+        res.send('Store successfully added');
+      })
+      .catch((error) => {
+        res.send('There was an error adding a store: ', error);
+      });
+  });
+
+
+
+//Post new stock info using raw SQL
+
+
+//Update a new product using async/await
+//Update a new store using Promises
+//Post new stock info using raw SQL
+
+//Delete one product using async/await
+//Delete one store using Promises
+//Delete one set of stock info using raw SQL
+
+//Delete all products using async/await
+//Delete all stores using Promises
+//Delete all stock info using raw SQL
 
 
   app.listen(port, () => {
