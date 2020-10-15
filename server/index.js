@@ -144,8 +144,7 @@ app.get('/stores/:storeId', async (req, res) => {
 //Post new stock info using raw SQL
 app.post('/stock', (req, res) => {
   const { id, name, color, colorUrl, size, qty, productId, storeId } = req.body;
-  sequelize.query(`INSERT INTO Stocks (id, color, colorUrl, size, qty, productId, storeId) values (${id}, '${color}', '${colorUrl}', '${size}', ${qty}, ${productId}, ${storeId})`,
-    {type: QueryTypes.INSERT, attributes: {exclude: ['createdAt', 'updatedAt']}})
+  sequelize.query(`INSERT INTO Stocks (color, colorUrl, size, qty, productId, storeId) values ('${color}', '${colorUrl}', '${size}', ${qty}, ${productId}, ${storeId})`)
     .then((data) => {
       res.send('Stock successfully added!');
     })
@@ -156,9 +155,52 @@ app.post('/stock', (req, res) => {
  });
 
 
-//Update a new product using async/await
-//Update a new store using Promises
-//Post new stock info using raw SQL
+//Update a product using async/await
+app.put('/products/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.Product.update(req.body, {
+      where: {
+        id: id
+      }
+    });
+    res.send(`Product ${id} successfully updated`);
+  } catch(error) {
+    console.error(error);
+    res.send(`There was an error updating product ${id}`);
+  }
+});
+
+//Update a store using Promises
+app.put('/stores/:id', (req, res) => {
+  const { id } = req.params;
+  db.Store.update(req.body, {
+    where: {
+      id: id
+    }
+  })
+    .then( (data) => {
+      res.send(`Store ${id} successfully updated`);
+    })
+    .catch( (error) => {
+      console.error(error);
+      res.send(`There was an error updating product ${id}`);
+    });
+});
+
+//Update stock info using raw SQL
+app.put('/stock/:id', (req, res) => {
+  const { id } = req.params;
+  const { color, colorUrl, size, qty, storeId, productId } = req.body
+  sequelize.query(`UPDATE Stocks SET color='${color}', colorUrl='${colorUrl}', size='${size}', qty=${qty}, storeId=${storeId}, productId=${productId} WHERE id=${id}`)
+    .then( (data) => {
+      res.send(`Stock ${id} successfully updated`);
+    })
+    .catch( (error) => {
+      console.error(error);
+      res.send(`There was an error updating stock ${id}`);
+    });
+})
 
 //Delete one product using async/await
 //Delete one store using Promises
