@@ -2,6 +2,28 @@
 const {Product, Stock, Store} = require('./models.js');
 const faker = require('faker');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // asynchronous anonymous function to populate the database
 (async function() {
 

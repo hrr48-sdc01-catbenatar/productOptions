@@ -6,9 +6,11 @@
   "scripts": {
     "start": "nodemon index.js",
     "seed": "node database/seed.js",
+    "gen": "node datbase/dataGen.js",
     "test": "jest"
   },
   "dependencies": {
+    "async": "^3.2.0",
     "axios": "^0.20.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

@@ -164,7 +164,7 @@ app.get('/products/:productId', async (req, res) => {
 //   }
 // });
 
-
+//USE SEQUELIZE EAGER LOADING FOR STOCKS
 
   // ------------------ getting stock data using sequelize methods ----------------
   // app.get('/stock', async (req, res) => {
