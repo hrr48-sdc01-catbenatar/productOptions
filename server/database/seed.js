@@ -11,7 +11,7 @@ const faker = require('faker');
     SET FOREIGN_KEY_CHECKS = 0;
     TRUNCATE TABLE stocks;TRUNCATE TABLE products;TRUNCATE TABLE stores;
     2) run:
-    node database/seed.js
+    node database/seed.jsnp
   */
 
 // ------------------------- actual data -------------------------:
