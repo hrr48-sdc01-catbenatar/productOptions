@@ -5,14 +5,24 @@ const productChunkSize = 1000;
 const storeChunkSize = 10;
 const stockChunkSize = 1000;
 
-const totalProductRecords = 10000;
+const totalProductRecords = 10000000;
 const totalStoreRecords = 50;
-const totalStockRecords = totalProductRecords * totalProductRecords;
+const totalStockRecords = totalProductRecords * totalStoreRecords;
 
 const writeProducts = fs.createWriteStream('products.csv');
 const writeStores = fs.createWriteStream('stores.csv');
 const writeStocks = fs.createWriteStream('stocks.csv');
 
+//starting values for the primary keys
+let productId = 0;
+let storeId = 0;
+let stockId = 0;
+
+//starting values for the foreign keys
+let stock_productId = 0;
+let stock_storeId = 0;
+
+//data not available in the right format on Faker:
 const colors = [
   ['White', 'https://imgur.com/xvJ98fe.png'],
   ['Blue', 'https://imgur.com/zReIoca.png'],
@@ -22,9 +32,9 @@ const colors = [
   ['Gold', 'https://imgur.com/L7cseNz.png']
 ];
 const sizes = ['S', 'M', 'L', 'XL', 'XXL', '2XL'];
-
 const locations = ['boulder', 'longmont', 'superior', 'westminister', 'aurora'];
 
+//generic function that writes data for any of the three tables--Products, Stocks, or Stores
 const writeData = function(writer, totalRecords, chunkSize, generateFunction, encoding, callback) {
   let i = totalRecords / chunkSize;
   write();
@@ -45,7 +55,7 @@ const writeData = function(writer, totalRecords, chunkSize, generateFunction, en
   }
 }
 
-let productId = 0;
+
 const makeRandomProducts = function(num) {
   let productData = '';
   const limit = productId + num;
@@ -60,7 +70,7 @@ const makeRandomProducts = function(num) {
   return productData;
 }
 
-let storeId = 0;
+
 const makeRandomStores = function(num) {
   let storeData = '';
   const limit = storeId + num;
@@ -72,9 +82,7 @@ const makeRandomStores = function(num) {
   return storeData;
 }
 
-let stockId = 0;
-let stock_productId = 0;
-let stock_storeId = 0;
+
 const makeRandomStocks = function(num) {
   let stockData = '';
   const limit = stockId + num;
@@ -90,7 +98,7 @@ const makeRandomStocks = function(num) {
     stockId++;
 
     //Generate stock for all stores for first product. Then all stores for second product. etc.
-    if (stock_storeId >= totalStoreRecords) {
+    if (stock_storeId >= totalStoreRecords - 1) {
       stock_storeId = 0;
       stock_productId++;
     } else {
