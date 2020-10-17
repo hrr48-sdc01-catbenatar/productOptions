@@ -13,15 +13,6 @@ const writeProducts = fs.createWriteStream('products.csv');
 const writeStores = fs.createWriteStream('stores.csv');
 const writeStocks = fs.createWriteStream('stocks.csv');
 
-//starting values for the primary keys
-let productId = 0;
-let storeId = 0;
-let stockId = 0;
-
-//starting values for the foreign keys
-let stock_productId = 0;
-let stock_storeId = 0;
-
 //data not available in the right format on Faker:
 const colors = [
   ['White', 'https://imgur.com/xvJ98fe.png'],
@@ -55,7 +46,7 @@ const writeData = function(writer, totalRecords, chunkSize, generateFunction, en
   }
 }
 
-
+let productId = 0;
 const makeRandomProducts = function(num) {
   let productData = '';
   const limit = productId + num;
@@ -70,7 +61,7 @@ const makeRandomProducts = function(num) {
   return productData;
 }
 
-
+let storeId = 0;
 const makeRandomStores = function(num) {
   let storeData = '';
   const limit = storeId + num;
@@ -82,6 +73,9 @@ const makeRandomStores = function(num) {
   return storeData;
 }
 
+let stockId = 0;
+let stock_productId = 0;
+let stock_storeId = 0;
 
 const makeRandomStocks = function(num) {
   let stockData = '';
