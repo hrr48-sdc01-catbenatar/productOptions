@@ -55,7 +55,7 @@ const makeRandomProducts = function(num) {
     const price = (faker.commerce.price() % 40 + 10);
     const reviews = parseFloat(((Math.random() * 2) + 3).toFixed(2));
     const reviewCount = Math.floor(Math.random() * 35);
-    productData += `${productId}, ${name},${price}, ${reviews}, ${reviewCount}\n`;
+    productData += `${productId},${name},${price},${reviews},${reviewCount}\n`;
     productId++;
   }
   return productData;
@@ -67,7 +67,7 @@ const makeRandomStores = function(num) {
   const limit = storeId + num;
   while (storeId < limit) {
     const location = locations[Math.floor(Math.random() * locations.length)];
-    storeData += `${storeId}, ${location}\n`;
+    storeData += `${storeId},${location}\n`;
     storeId++;
   }
   return storeData;
@@ -88,7 +88,7 @@ const makeRandomStocks = function(num) {
     const qty = Math.floor(Math.random() * 15);
     const storeId = stock_storeId;
     const productId = stock_productId;
-    stockData += `${stockId}, ${color}, ${colorUrl}, ${size}, ${qty}, ${storeId}, ${productId}\n`;
+    stockData += `${stockId},${color},${colorUrl},${size},${qty},${storeId},${productId}\n`;
     stockId++;
 
     //Generate stock for all stores for first product. Then all stores for second product. etc.
