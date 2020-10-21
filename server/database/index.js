@@ -2,12 +2,17 @@ const {Sequelize, DataTypes} = require('sequelize');
 const dialects = ['mysql', 'postgres'];
 
 const db = new Sequelize(
-  'options', 'root', '', {
+  'options', 'postgres', 'madison', {
     host: '127.0.0.1',
-    // can try port number
-    port: 3307,
-    dialect: 'mysql'
+    dialect: 'postgres'
   });
+
+  // const db = new Sequelize(
+  //   'options', 'root', '', {
+  //     host: 'localhost',
+  //     port: '3306',
+  //     dialect: 'mysql'
+  //   });
 
 
   db.authenticate()

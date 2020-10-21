@@ -1,13 +1,13 @@
+console.time('productTimer');
+console.time('storeTimer');
+console.time('stockTimer');
+
 const faker = require('faker');
 const fs = require('fs');
 
 const productChunkSize = 1000;
-const storeChunkSize = 10;
+const storeChunkSize = 5;
 const stockChunkSize = 1000;
-
-const totalProductRecords = 10000000;
-const totalStoreRecords = 50;
-const totalStockRecords = totalProductRecords * totalStoreRecords;
 
 const writeProducts = fs.createWriteStream('products.csv');
 const writeStores = fs.createWriteStream('stores.csv');
@@ -24,6 +24,11 @@ const colors = [
 ];
 const sizes = ['S', 'M', 'L', 'XL', 'XXL', '2XL'];
 const locations = ['boulder', 'longmont', 'superior', 'westminister', 'aurora'];
+
+//using 1 million for totalProductRecords, which corresponds with 180 million stock records
+const totalProductRecords = 1000000;
+const totalStoreRecords = locations.length;
+const totalStockRecords = totalProductRecords * totalStoreRecords * colors.length * sizes.length;
 
 //generic function that writes data for any of the three tables--Products, Stocks, or Stores
 const writeData = function(writer, totalRecords, chunkSize, generateFunction, encoding, callback) {
@@ -49,7 +54,7 @@ const writeData = function(writer, totalRecords, chunkSize, generateFunction, en
 let productId = 0;
 const makeRandomProducts = function(num) {
   let productData = '';
-  const limit = productId + num;
+  const limit = Math.min(productId + num, totalProductRecords);
   while (productId < limit) {
     const name = faker.commerce.product();
     const price = (faker.commerce.price() % 40 + 10);
@@ -62,11 +67,11 @@ const makeRandomProducts = function(num) {
 }
 
 let storeId = 0;
-const makeRandomStores = function(num) {
+const makeStores = function(num) {
   let storeData = '';
   const limit = storeId + num;
   while (storeId < limit) {
-    const location = locations[Math.floor(Math.random() * locations.length)];
+    const location = locations[storeId];
     storeData += `${storeId},${location}\n`;
     storeId++;
   }
@@ -79,20 +84,23 @@ let stock_storeId = 0;
 
 const makeRandomStocks = function(num) {
   let stockData = '';
-  const limit = stockId + num;
+  const limit = Math.min(stockId + num, totalStockRecords);
   while (stockId < limit) {
-    const colorIndex = Math.floor(Math.random() * colors.length);
-    const color = colors[colorIndex][0];
-    const colorUrl = colors[colorIndex][1];
-    const size = sizes[Math.floor(Math.random() * sizes.length)];
-    const qty = Math.floor(Math.random() * 15);
-    const storeId = stock_storeId;
-    const productId = stock_productId;
-    stockData += `${stockId},${color},${colorUrl},${size},${qty},${storeId},${productId}\n`;
-    stockId++;
-
+    //create a stock for each combination of color and size for a single storeId and a single productId
+    for (var colorIndex = 0; colorIndex < colors.length; colorIndex++) {
+      for (var sizeIndex = 0; sizeIndex < sizes.length; sizeIndex++) {
+        const color = colors[colorIndex][0];
+        const colorUrl = colors[colorIndex][1];
+        const size = sizes[sizeIndex];
+        const qty = Math.floor(Math.random() * 15);
+        const storeId = stock_storeId;
+        const productId = stock_productId;
+        stockData += `${stockId},${color},${colorUrl},${size},${qty},${storeId},${productId}\n`;
+        stockId++;
+      }
+    }
     //Generate stock for all stores for first product. Then all stores for second product. etc.
-    if (stock_storeId >= totalStoreRecords - 1) {
+    if (stock_storeId >= locations.length - 1) {
       stock_storeId = 0;
       stock_productId++;
     } else {
@@ -105,14 +113,16 @@ const makeRandomStocks = function(num) {
 writeData(writeProducts, totalProductRecords, productChunkSize, makeRandomProducts, 'utf-8', (e, data) => {
   writeProducts.removeAllListeners('drain');
   writeProducts.end();
+  console.timeEnd('productTimer');
   if(e) {
     console.error(e)
   }
 });
 
-writeData(writeStores, totalStoreRecords, storeChunkSize, makeRandomStores, 'utf-8', (e, data) => {
+writeData(writeStores, totalStoreRecords, storeChunkSize, makeStores, 'utf-8', (e, data) => {
   writeStores.removeAllListeners('drain');
   writeStores.end();
+  console.timeEnd('storeTimer');
   if(e) {
     console.error(e)
   }
@@ -121,6 +131,7 @@ writeData(writeStores, totalStoreRecords, storeChunkSize, makeRandomStores, 'utf
 writeData(writeStocks, totalStockRecords, stockChunkSize, makeRandomStocks, 'utf-8', (e, data) => {
   writeStocks.removeAllListeners('drain');
   writeStocks.end();
+  console.timeEnd('stockTimer');
   if(e) {
     console.error(e)
   }

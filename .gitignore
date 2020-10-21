@@ -23,3 +23,14 @@ coverage
 # Compiled Dirs (http://nodejs.org/api/addons.html)
 build/
 client/public/dist/bundle.js
+
+#Reference to original files in case of mistakes:
+original_database_files/
+
+#package-lock.json
+package-lock.json
+
+#dataGen files
+products.csv
+stocks.csv
+stores.csv

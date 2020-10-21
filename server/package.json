@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon index.js",
     "seed": "node database/seed.js",
-    "gen": "node datbase/dataGen.js",
+    "gen": "node database/dataGen.js",
     "test": "jest"
   },
   "dependencies": {
