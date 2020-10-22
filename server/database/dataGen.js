@@ -29,7 +29,7 @@ const storeChunkSize = locations.length;
 const stockChunkSize = 1000;
 
 //using 1 million for totalProductRecords, which corresponds with 216 million stock records
-const totalProductRecords = 1000000;
+const totalProductRecords = 10000;
 const totalStoreRecords = locations.length;
 const totalStockRecords = totalProductRecords * totalStoreRecords * colors.length * sizes.length;
 
@@ -63,7 +63,7 @@ const writeData = function(writer, totalRecords, chunkSize, headers, generateFun
 }
 
 let productId = 0;
-const productDataHeaders = `"id","name","price","reviews","reviewCount"`;
+const productDataHeaders = `id,name,price,reviews,reviewcount`;
 const makeRandomProducts = function(num) {
   let productData = '\n';
   const limit = Math.min(productId + num, totalProductRecords);
@@ -79,7 +79,7 @@ const makeRandomProducts = function(num) {
 }
 
 let storeId = 0;
-const storeDataHeaders = `"id","location"`;
+const storeDataHeaders = `id,location`;
 const makeStores = function(num) {
   let storeData = '\n';
   const limit = storeId + num;
@@ -94,7 +94,7 @@ const makeStores = function(num) {
 let stockId = 0;
 let stock_productId = 0;
 let stock_storeId = 0;
-const stockDataHeaders = `"id","color","colorUrl","size","qty","StoreId","ProductId"`;
+const stockDataHeaders = `id,color,colorUrl,size,qty,StoreId,ProductId`;
 
 const makeRandomStocks = function(num) {
   const limit = Math.min(stockId + num, totalStockRecords);
@@ -155,7 +155,8 @@ writeData(writeStocks, totalStockRecords, stockChunkSize, stockDataHeaders, make
 let cass_stockId = 0;
 let cass_productId = 0;
 let cass_storeId = 0;
-const stockByProductDataHeaders = `"id","name","location","color","colorUrl","size","qty","StoreId","ProductId"`;
+let cass_name = faker.commerce.product();
+const stockByProductDataHeaders = `id,name,location,color,colorurl,size,qty,storeid,productid`;
 
 const makeStocksByProductId = function(num) {
   const limit = Math.min(cass_stockId + num, totalStockRecords);
@@ -169,8 +170,7 @@ const makeStocksByProductId = function(num) {
         const size = sizes[sizeIndex];
         const qty = Math.floor(Math.random() * 15);
         const location = locations[cass_storeId];
-        const name = faker.commerce.product();
-        stockData += `${cass_stockId},"${name}", "${location}","${color}","${colorUrl}","${size}",${qty},${cass_storeId},${cass_productId}\n`;
+        stockData += `${cass_stockId},"${cass_name}","${location}","${color}","${colorUrl}","${size}",${qty},${cass_storeId},${cass_productId}\n`;
         cass_stockId++;
       }
     }
@@ -178,6 +178,7 @@ const makeStocksByProductId = function(num) {
     if (cass_storeId >= locations.length - 1) {
       cass_storeId = 0;
       cass_productId++;
+      cass_name = faker.commerce.product();
     } else {
       cass_storeId++;
     }

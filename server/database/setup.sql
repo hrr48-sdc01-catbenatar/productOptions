@@ -1,25 +1,25 @@
--- DROP DATABASE IF EXISTS options;
+DROP DATABASE IF EXISTS options;
 
--- CREATE DATABASE options
---     WITH
---     OWNER = postgres
---     ENCODING = 'UTF8'
---     LC_COLLATE = 'en_US.UTF-8'
---     LC_CTYPE = 'en_US.UTF-8'
---     TABLESPACE = pg_default
---     CONNECTION LIMIT = -1;
+CREATE DATABASE options
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'en_US.UTF-8'
+    LC_CTYPE = 'en_US.UTF-8'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
 
--- \c options;
+\c options;
 
--- CREATE TABLE public."Products"
--- (
---     id integer NOT NULL DEFAULT nextval('"Products_id_seq"'::regclass),
---     name character varying(255) COLLATE pg_catalog."default" NOT NULL,
---     price double precision NOT NULL,
---     reviews double precision DEFAULT '0'::double precision,
---     "reviewCount" integer DEFAULT 0,
---     CONSTRAINT "Products_pkey" PRIMARY KEY (id)
--- )
+CREATE TABLE public."Products"
+(
+    id integer NOT NULL DEFAULT nextval('"Products_id_seq"'::regclass),
+    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    price double precision NOT NULL,
+    reviews double precision DEFAULT '0'::double precision,
+    "reviewCount" integer DEFAULT 0,
+    CONSTRAINT "Products_pkey" PRIMARY KEY (id)
+);
 
 -- TABLESPACE pg_default;
 
@@ -86,3 +86,14 @@ TRUNCATE "Stores" CASCADE;
 -- SELECT * FROM "Stores";
 
 -- ** EXPLAIN ANALYZE OR \timing CAN BE USED FOR TIMING QUERIES.
+
+
+SELECT
+    pg_terminate_backend(pid)
+FROM
+    pg_stat_activity
+WHERE
+    -- don't kill my own connection!
+    pid <> pg_backend_pid()
+    -- don't kill the connections to other databases
+    AND datname = 'options';

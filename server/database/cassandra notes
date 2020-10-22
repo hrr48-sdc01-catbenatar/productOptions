@@ -1,0 +1,15 @@
+***IN CQL***
+SOURCE '/Users/madison/Documents/Hack Reactor/hrr48-sdc/productOptions/server/database/setup.cql'
+
+
+***IN TERMINAL***
+/Users/madison/Documents/Hack\ Reactor/hrr48-sdc/productOptions/server/dsbulk-1.7.0/bin/dsbulk load -url products.csv -k options -t products;
+
+/Users/madison/Documents/Hack\ Reactor/hrr48-sdc/productOptions/server/dsbulk-1.7.0/bin/dsbulk load -url stores.csv -k options -t stores;
+
+/Users/madison/Documents/Hack\ Reactor/hrr48-sdc/productOptions/server/dsbulk-1.7.0/bin/dsbulk load -url stocks_by_product_id.csv -k options -t stocks_by_product_id;
+
+
+
+***IN CQL***
+SELECT * FROM stocks_by_product_id WHERE productid = 999;
