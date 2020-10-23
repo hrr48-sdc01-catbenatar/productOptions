@@ -12,4 +12,12 @@ SOURCE '/Users/madison/Documents/Hack Reactor/hrr48-sdc/productOptions/server/da
 
 
 ***IN CQL***
-SELECT * FROM stocks_by_product_id WHERE productid = 999;
+SELECT * FROM products WHERE id = 0;
+SELECT * FROM products WHERE id = 500000;
+SELECT * FROM products WHERE id = 999999;
+
+SELECT * FROM stocks_by_product_id WHERE productid = 0 order by id desc limit 10;
+SELECT * FROM stocks_by_product_id WHERE productid = 500000 order by id desc limit 10;
+SELECT * FROM stocks_by_product_id WHERE productid = 600000 order by id desc limit 10;
+SELECT * FROM stocks_by_product_id WHERE productid = 900000 order by id desc limit 10;
+SELECT * FROM stocks_by_product_id WHERE productid = 999999 order by id desc limit 10;

@@ -1,0 +1,44 @@
+*** IN psql ***
+DROP DATABASE IF EXISTS productoptions;
+CREATE DATABASE productoptions;
+\c productoptions;
+
+to see data tables:
+\dt
+
+  //STORES
+CREATE TABLE stores (id integer PRIMARY KEY NOT NULL, location text);
+  //PRODUCTS
+CREATE TABLE products (id integer PRIMARY KEY NOT NULL, name text NOT NULL, price decimal, reviews decimal, reviewCount integer);
+  // STOCKS
+CREATE TABLE stocks (id bigserial PRIMARY KEY NOT NULL, color text, colorurl text, size text, qty integer, storeID integer REFERENCES stores (id), productID integer REFERENCES products (id));
+
+TRUNCATE stocks CASCADE;
+TRUNCATE products CASCADE;
+TRUNCATE stores CASCADE;
+
+\copy stores FROM '/Users/madison/Documents/Hack Reactor/hrr48-sdc/productOptions/server/stores.csv' WITH CSV HEADER;
+\copy products FROM '/Users/madison/Documents/Hack Reactor/hrr48-sdc/productOptions/server/products.csv' WITH CSV HEADER;
+
+//smaller version of stocks for testing:
+\copy stocks FROM '/Users/madison/Documents/Hack Reactor/hrr48-sdc/productOptions/server/stocksshort.csv' WITH CSV HEADER;
+
+\copy stocks FROM '/Users/madison/Documents/Hack Reactor/hrr48-sdc/productOptions/server/stocks.csv' WITH CSV HEADER;
+
+\timing
+SELECT * FROM products WHERE id=0;
+SELECT * FROM "Products" WHERE id=500000;
+SELECT * FROM "Products" WHERE id=999999;
+
+SELECT * FROM stocks WHERE id = 0;
+SELECT * FROM "Stocks" WHERE id = 100000000;
+SELECT * FROM "Stocks" WHERE id = 215999999;
+
+SELECT stocks.id, products.name, stores.location, stocks.color, stocks.colorurl, stocks.size, stocks.qty, stocks.productID, stocks.storeID FROM stocks INNER JOIN products ON products.id = stocks.productID INNER JOIN stores ON stocks.storeID = stores.id WHERE stocks.productID=0 ORDER BY stocks.id DESC LIMIT 10;
+
+
+//to see table info:
+SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name = 'stocks';
+
+//when you need to kill all other sessions/users:
+SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = 'options';

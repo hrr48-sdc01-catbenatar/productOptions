@@ -29,7 +29,7 @@ const storeChunkSize = locations.length;
 const stockChunkSize = 1000;
 
 //using 1 million for totalProductRecords, which corresponds with 216 million stock records
-const totalProductRecords = 10000;
+const totalProductRecords = 1000000;
 const totalStoreRecords = locations.length;
 const totalStockRecords = totalProductRecords * totalStoreRecords * colors.length * sizes.length;
 
