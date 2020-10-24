@@ -142,7 +142,3 @@ const ProductOptions = () => {
 }
 
 export default ProductOptions;
-
-client/public/src/components/app.jsx
-        modified:   client/public/src/components/details.jsx
-        modified:   server/database/index.js
