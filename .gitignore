@@ -34,3 +34,11 @@ package-lock.json
 products.csv
 stocks.csv
 stores.csv
+
+dsbulk-1.7.0/
+package-lock.json
+
+stocks_by_product_id.csv
+stocksshort.csv
+dsbulk-1.7.0.tar.gz
+.env
