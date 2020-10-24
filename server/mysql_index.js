@@ -1,3 +1,6 @@
+//NOTE: THIS FILE IS ONLY FOR REFERENCE; NOT BEING USED ANYMORE
+
+
 const express = require('express');
 const app = express();
 const port = 3002;
