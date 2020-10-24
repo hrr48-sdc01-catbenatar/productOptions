@@ -21,3 +21,6 @@ SELECT * FROM stocks_by_product_id WHERE productid = 500000 order by id desc lim
 SELECT * FROM stocks_by_product_id WHERE productid = 600000 order by id desc limit 10;
 SELECT * FROM stocks_by_product_id WHERE productid = 900000 order by id desc limit 10;
 SELECT * FROM stocks_by_product_id WHERE productid = 999999 order by id desc limit 10;
+
+
+DELETE * FROM options.products WHERE id=0;
