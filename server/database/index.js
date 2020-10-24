@@ -1,7 +1,6 @@
 const cassandra = require('cassandra-driver');
 const client = new cassandra.Client({ contactPoints: [`${process.env.DB_HOST}:${process.env.DB_PORT}`], localDataCenter: 'datacenter1', keyspace: 'options' });
 
-
 module.exports.getOneProduct = (productId, callback) => {
   const query = `SELECT * FROM products WHERE id = ${productId}`;
   updateDatabase(query, callback);
