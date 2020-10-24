@@ -12,6 +12,7 @@
   "dependencies": {
     "async": "^3.2.0",
     "axios": "^0.20.0",
+    "cassandra-driver": "^4.6.0",
     "cors": "^2.8.5",
     "csv-parser": "^2.3.3",
     "dotenv": "^8.2.0",
