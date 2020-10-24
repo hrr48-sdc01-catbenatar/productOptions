@@ -12,7 +12,7 @@ const Details = ({product}) => {
         <EmptyStars/>
         <FullStars width={(product.reviews * 20).toString()} />
 
-        <ReviewsCount> {product.reviewCount}</ReviewsCount>
+        <ReviewsCount> {product.reviewcount}</ReviewsCount>
       </Ratings>
     </div>
   )
