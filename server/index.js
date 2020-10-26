@@ -4,6 +4,8 @@ if (result.error) {
   throw result.error
 }
 
+require('newrelic');
+
 const express = require('express');
 const db = require('./database');
 const app = express();
@@ -19,7 +21,7 @@ app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, '../client/public/dist')))
 
-app.get('/products', async (req, res) => {
+app.get('/products', (req, res) => {
   db.getAllProducts((err, data) => {
     if(err) {
       res.status(404).send('Not found');
