@@ -1,5 +1,5 @@
 const cassandra = require('cassandra-driver');
-const client = new cassandra.Client({ contactPoints: [`localhost:9042`], localDataCenter: 'datacenter1', keyspace: 'options' });
+const client = new cassandra.Client({ contactPoints: [`18.231.33.185:9042`], localDataCenter: 'datacenter1', keyspace: 'options' });
 
 module.exports.getOneProduct = (productId, callback) => {
   const query = `SELECT * FROM products WHERE id = ${productId}`;
