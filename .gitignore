@@ -38,9 +38,9 @@ dsbulk-1.7.0/
 package-lock.json
 
 stocks_by_product_id.csv
-stocks_by_product_id_small.csv
+old/stocks_by_product_id_small.csv
 stocksshort.csv
 dsbulk-1.7.0.tar.gz
 .env
-newrelic.js
+old/newrelic.js
 
