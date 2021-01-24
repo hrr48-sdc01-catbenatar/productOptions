@@ -1,3 +1,12 @@
+DROP KEYSPACE IF EXISTS options;
+CREATE KEYSPACE options
+  WITH REPLICATION = {
+   'class' : 'SimpleStrategy',
+   'replication_factor' : 1
+  };
+
+USE options;
+
 DROP TABLE IF EXISTS options.products;
 DROP TABLE IF EXISTS options.stores;
 DROP TABLE IF EXISTS options.stocks_by_product_id;
